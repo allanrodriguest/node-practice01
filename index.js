@@ -16,8 +16,18 @@ function checkProjectExists(req, res, next) {
     return res.status(400).json({ error: "Project does not exists" });
   }
 
-  next();
+  return next();
 }
+
+// Creating a counter for the requests
+
+function logRequests(req, res, next) {
+  console.count("Number of requests ");
+
+  return next();
+}
+
+server.use(logRequests);
 
 server.post("/projects", (req, res) => {
   const { id } = req.body;
@@ -38,7 +48,7 @@ server.get("/projects", (req, res) => {
   return res.json(projetos);
 });
 
-server.put("/projects/:id", (req, res) => {
+server.put("/projects/:id", checkProjectExists, (req, res) => {
   const { id } = req.params;
 
   const novoProjeto = req.body;
@@ -48,7 +58,7 @@ server.put("/projects/:id", (req, res) => {
   return res.json(projetos);
 });
 
-server.delete("/projects/:id", (req, res) => {
+server.delete("/projects/:id", checkProjectExists, (req, res) => {
   const { id } = req.params;
 
   projetos.splice(id, 1);
@@ -56,7 +66,7 @@ server.delete("/projects/:id", (req, res) => {
   return res.json(projetos);
 });
 
-server.post("/projects/:id/tasks", (req, res) => {
+server.post("/projects/:id/tasks", checkProjectExists, (req, res) => {
   const { id } = req.params;
 
   const { title } = req.body;
