@@ -6,6 +6,19 @@ server.use(express.json());
 
 const projetos = [];
 
+// Creating Middlewares
+
+function checkProjectExists(req, res, next) {
+  const { id } = req.params;
+  const projeto = projetos.find((proj) => proj.id == id);
+
+  if (!projeto) {
+    return res.status(400).json({ error: "Project does not exists" });
+  }
+
+  next();
+}
+
 server.post("/projects", (req, res) => {
   const { id } = req.body;
   const { title } = req.body;
